@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ board.name }} - {{ block.super }}
+{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{% url 'home' %}">Quiz Board</a></li>
+    <li class="breadcrumb-item active">{{ board.name }}</li>
+{% endblock %}
+
+{% block content %}
+    <div class="mb-4">
+        <a href="{% url 'new_topic' board.pk %}" class="btn btn-primary">토픽 추가</a>
+    </div>
+
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th>주제</th>
+                <th>발제</th>
+                <th>등록</th>
+                <th>조회</th>
+                <th>일자</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for topic in board.topics.all %}
+                <tr>
+                    <td>{{ topic.subject }}</td>
+                    <td>{{ topic.starter.username }}</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>{{ topic.last_update }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

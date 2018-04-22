@@ -1,0 +1,23 @@
+{% extends 'base_accounts.html' %}
+
+{% block title %}퀴즈보드 회원가입{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10 col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">회원가입</h3>
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        {% include 'includes/form.html' %}
+                        <button type="submit" class="btn btn-primary btn-block">가입</button>
+                    </form>
+                </div>
+                <div class="card-footer text-muted text-center">
+                    기존 회원인 경우 <a href="{% url 'login' %}">로그인</a> 하세요.
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
