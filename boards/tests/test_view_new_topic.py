@@ -2,66 +2,16 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse, resolve
 
-from ..views import home, board_topics, new_topic
+from ..views import new_topic
 from ..forms import NewTopicForm
 from ..models import Board, Topic, Post
 
 
-class HomeTest(TestCase):
-    def setUp(self):
-        self.board = Board.objects.create(name='Django', description='Django board')
-        url = reverse('home')
-        self.response = self.client.get(url)
-
-    def test_home_view_status_code(self):
-        url = reverse('home')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-
-    def test_home_url_resolves_home_view(self):
-        view = resolve('/')
-        self.assertEqual(view.func, home)
-
-    def test_home_view_contains_link_to_topics_page(self):
-        board_topic_url = reverse('board_topics', kwargs={'pk': self.board.pk})
-        # print("board_topic_url: ", board_topic_url)
-        # print("self.response: ", self.response)
-        self.assertContains(self.response, 'href="{0}"'.format(board_topic_url))
-
-
-class BoardTopicsTests(TestCase):
-    def setUp(self):
-        Board.objects.create(name='Django', description='django board')
-
-    def test_board_topics_view_success_status_code(self):
-        url = reverse('board_topics', kwargs={'pk': 1})
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-
-    def test_board_topics_view_not_found_status_code(self):
-        url = reverse('board_topics', kwargs={'pk': 99})
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 404)
-
-    def test_board_topics_url_resolves_board_topic_view(self):
-        view = resolve('/boards/1/')  # URL must start with '/'
-        self.assertEqual(view.func, board_topics)
-
-    def test_board_topics_view_contains_navigation_links(self):
-        board_topics_url = reverse('board_topics', kwargs={'pk': 1})
-        homepage_url = reverse('home')
-        new_topics_url = reverse('new_topic', kwargs={'pk': 1})
-
-        response = self.client.get(board_topics_url)
-
-        self.assertContains(response, 'href="{0}"'.format(homepage_url))
-        self.assertContains(response, 'href="{0}"'.format(new_topics_url))
-
-
 class NewTopicTests(TestCase):
     def setUp(self):
-        Board.objects.create(name='Django', description='Django board.')
+        Board.objects.create(name='Quiz1', description='Quiz board.')
         User.objects.create_user(username='john', email='john@doe.com', password='123')
+        self.client.login(username='john', password='123')
 
     def test_new_topic_view_success_status_code(self):
         url = reverse('new_topic', kwargs={'pk': 1})
@@ -101,7 +51,7 @@ class NewTopicTests(TestCase):
     def test_new_topic_invalid_post_date(self):
         url = reverse('new_topic', kwargs={'pk': 1})
         response = self.client.post(url, {})
-        form = response.context.get('form')
+        form = response.context.get('form')  # 'NoneType' object has no attribute 'get' -> check setUp()
         self.assertEqual(response.status_code, 200)
         self.assertTrue(form.errors)
 
@@ -119,6 +69,19 @@ class NewTopicTests(TestCase):
     def test_contains_forms(self):
         url = reverse('new_topic', kwargs={'pk': 1})
         response = self.client.get(url)
-        form = response.context.get('form')
+        # print("response.context: ", response.context)  # Check setUp()
+        form = response.context.get('form')  # 'NoneType' object has no attribute 'get'
         self.assertIsInstance(form, NewTopicForm)
 
+
+class LoginRequiredNewTopicTests(TestCase):
+    def setUp(self):
+        Board.objects.create(name='Quiz1', description='Quiz board.')
+        self.url = reverse('new_topic', kwargs={'pk': 1})
+        self.response = self.client.get(self.url)
+
+    def test_redirection(self):
+        login_url = reverse('login')
+        self.assertRedirects(
+            self.response,
+            '{login_url}?next={url}'.format(login_url=login_url, url=self.url))
