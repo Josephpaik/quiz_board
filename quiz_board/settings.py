@@ -116,6 +116,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # EMAIL BACKEND for password reset
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 # 비밀번호 재설정에 필요한 페이지 4개
 # 1. 재설정 프로세스 시작 폼 페이지
 # 2. 성공 페이지: 프로세스가 시작되었음을 알리고 사용자에게 자신의 스팸 폴더 등을 확인하도록 지시
@@ -146,3 +147,5 @@ MEDIA_URL = '/media/'
 
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
+
+LOGIN_URL = 'login'

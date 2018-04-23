@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path
 from django.contrib.auth import views as auth_views
 
 from boards import views
@@ -50,12 +50,18 @@ urlpatterns = [
          auth_views.PasswordResetDoneView.as_view(
              template_name='password_reset_done.html'),
          name='password_reset_done'),
-    path('reset/<uidb64:[0-9A-Za-z_\-]+>/<token:[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20}>/',
-         auth_views.PasswordResetConfirmView.as_view(
-             template_name='password_reset_confirm.html'),
-         name='password_reset_confirm'),
+    re_path(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+            auth_views.PasswordResetConfirmView.as_view(
+                template_name='password_reset_confirm.html'),
+            name='password_reset_confirm'),
     path('reset/complete/',
          auth_views.PasswordResetCompleteView.as_view(
              template_name='password_reset_complete.html'),
          name='password_reset_complete'),
+    path('settings/password/', auth_views.PasswordChangeView.as_view(
+        template_name='password_change.html'),
+         name='password_change'),
+    path('settings/password/done/', auth_views.PasswordChangeDoneView.as_view(
+        template_name='password_change_done.html'),
+         name='password_change_done'),
 ]

@@ -30,7 +30,7 @@ class PasswordResetTests(TestCase):
 
     def test_form_inputs(self):
         self.assertContains(self.response, '<input', 2)
-        self.assertContains(self.response, 'type="emailJ"', 1)
+        self.assertContains(self.response, 'type="email"', 1)
 
 
 class SuccessfulPasswordResetTest(TestCase):
@@ -64,14 +64,14 @@ class InvalidPasswordResetTests(TestCase):
 class PasswordResetDoneTests(TestCase):
     def setUp(self):
         url = reverse('password_reset_done')
-        self.response = self.client.post(url)
+        self.response = self.client.get(url)
 
     def test_status_code(self):
         self.assertEqual(self.response.status_code, 200)
 
     def test_view_function(self):
         view = resolve('/reset/done/')
-        self.assertEqual(view.func.view_class, auth_views.PasswordChangeDoneView)
+        self.assertEqual(view.func.view_class, auth_views.PasswordResetDoneView)
 
 
 class PasswordResetConfirmTests(TestCase):
