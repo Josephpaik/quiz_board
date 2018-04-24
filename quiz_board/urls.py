@@ -26,11 +26,15 @@ urlpatterns = [
     path('about/', views.about, name='about'),
     path('admin/', admin.site.urls),
 
-    # boards
+    # board_topics
     path('boards/<int:pk>/', views.board_topics, name='board_topics'),
     path('boards/<int:pk>/new/', views.new_topic, name='new_topic'),
 
-    # accounts
+    # topics_posts
+    path('boards/<int:pk>/topics/<int:topic_pk>/', views.topic_posts, name='topic_posts'),
+    path('boards/<int:pk>/topics/<int:topic_pk>/reply/', views.reply_topic, name='reply_topic'),
+
+    # create accounts
     path('signup/', accounts_views.signup, name='signup'),
 
     # authentication
@@ -58,6 +62,8 @@ urlpatterns = [
          auth_views.PasswordResetCompleteView.as_view(
              template_name='password_reset_complete.html'),
          name='password_reset_complete'),
+
+    # Password Change
     path('settings/password/', auth_views.PasswordChangeView.as_view(
         template_name='password_change.html'),
          name='password_change'),

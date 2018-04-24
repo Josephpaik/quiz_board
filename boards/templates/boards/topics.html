@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block breadcrumb %}
-    <li class="breadcrumb-item"><a href="{% url 'home' %}">Quiz Board</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'home' %}">퀴즈 보드</a></li>
     <li class="breadcrumb-item active">{{ board.name }}</li>
 {% endblock %}
 
@@ -17,17 +17,17 @@
     <table class="table">
         <thead class="thead-dark">
             <tr>
-                <th>주제</th>
+                <th>토픽</th>
                 <th>작성</th>
                 <th>등록</th>
                 <th>조회</th>
-                <th>일자</th>
+                <th>일시</th>
             </tr>
         </thead>
         <tbody>
             {% for topic in board.topics.all %}
                 <tr>
-                    <td>{{ topic.subject }}</td>
+                    <td><a href="{% url 'topic_posts' board.pk topic.pk %}">{{ topic.subject }}</a></td>
                     <td>{{ topic.starter.username }}</td>
                     <td>0</td>
                     <td>0</td>
