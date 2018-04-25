@@ -19,6 +19,13 @@ class NewTopicForm(forms.ModelForm):
 
 
 class PostForm(forms.ModelForm):
+    message = forms.CharField(
+        label='내용',
+        widget=forms.Textarea(
+            attrs={'rows': 5, 'placeholder': '여기에 당신의 생각을 써주세요.'}
+        ),
+    )
+
     class Meta:
         model = Post
         fields = ['message', ]
