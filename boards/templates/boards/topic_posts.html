@@ -37,7 +37,9 @@
                         {{ post.message }}
                         {% if post.created_by == user %}
                             <div class="mb-3">
-                                <a href="#" class="btn btn-outline-primary btn-sm" role="button">수정</a>
+                                <a href="{% url 'edit_post' post.topic.board.pk post.topic.pk post.pk %}"
+                                   class="btn btn-outline-primary btn-sm"
+                                   role="button">수정</a>
                             </div>
                         {% endif %}
                     </div>
