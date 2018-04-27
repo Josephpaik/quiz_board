@@ -11,7 +11,7 @@
 
 {% block content %}
     <div class="mb-4">
-        <a href="{% url 'new_topic' board.pk %}" class="btn btn-primary">토픽 추가</a>
+        <a href="{% url 'new_topic' board.pk %}" class="btn btn-primary">New Topic</a>
     </div>
 
     <table class="table">
@@ -19,9 +19,9 @@
             <tr>
                 <th>토픽</th>
                 <th>작성</th>
-                <th>등록</th>
+                <th>댓글</th>
                 <th>조회</th>
-                <th>일시</th>
+                <th>최종</th>
             </tr>
         </thead>
         <tbody>
@@ -36,4 +36,7 @@
             {% endfor %}
         </tbody>
     </table>
+
+    {% include 'includes/pagination.html' %}
+
 {% endblock %}
