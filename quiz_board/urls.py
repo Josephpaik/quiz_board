@@ -22,13 +22,11 @@ from accounts import views as accounts_views
 
 urlpatterns = [
     # index page
-    # path('', views.home, name='home'),
     path('', views.BoardListView.as_view(), name='home'),
     path('about/', views.about, name='about'),
     path('admin/', admin.site.urls),
 
     # board_topics
-    # path('boards/<int:pk>/', views.board_topics, name='board_topics'),
     path('boards/<int:pk>/', views.TopicListView.as_view(), name='board_topics'),
     path('boards/<int:pk>/new/', views.new_topic, name='new_topic'),
 
@@ -76,4 +74,6 @@ urlpatterns = [
     path('settings/password/done/', auth_views.PasswordChangeDoneView.as_view(
         template_name='password_change_done.html'),
          name='password_change_done'),
+    path('settings/account/', accounts_views.UserUpdateView.as_view(),
+         name='my_account'),
 ]
