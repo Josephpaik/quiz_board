@@ -1,43 +1,22 @@
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Count
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.utils.decorators import method_decorator
-from django.views.generic import UpdateView, ListView
+from django.views.generic import UpdateView, ListView, CreateView
 
 from .forms import NewTopicForm, PostForm
 from .models import Board, Topic, Post
-
-
-# def home(request):
-#     boards = Board.objects.all()
-#     return render(request, 'boards/home.html', {'boards': boards})
-class BoardListView(ListView):
-    model = Board
-    context_object_name = 'boards'
-    template_name = 'boards/home.html'
 
 
 def about(request):
     return render(request, 'about.html')
 
 
-# def board_topics(request, pk):
-#     board = get_object_or_404(Board, pk=pk)
-#     queryset = board.topics.order_by('-last_updated').annotate(replies=Count('posts') - 1)
-#     page = request.GET.get('page', 1)
-#
-#     paginator = Paginator(queryset, 12)
-#
-#     try:
-#         topics = paginator.page(page)
-#     except PageNotAnInteger:
-#         topics = paginator.page(1)
-#     except EmptyPage:
-#         topics = paginator.page(paginator.num_pages)
-#
-#     return render(request, 'boards/topics.html', {'board': board, 'topics': topics})
+class BoardListView(ListView):
+    model = Board
+    context_object_name = 'boards'
+    template_name = 'boards/home.html'
 
 
 class TopicListView(ListView):
@@ -53,34 +32,6 @@ class TopicListView(ListView):
     def get_queryset(self):
         self.board = get_object_or_404(Board, pk=self.kwargs.get('pk'))
         queryset = self.board.topics.order_by('-last_updated').annotate(replies=Count('posts') - 1)
-        return queryset
-
-
-# def topic_posts(request, pk, topic_pk):
-#     topic = get_object_or_404(Topic, board__pk=pk, pk=topic_pk)
-#     topic.views += 1
-#     topic.save()
-#     return render(request, 'boards/topic_posts.html', {'topic': topic})
-
-
-class PostListView(ListView):
-    model = Post
-    context_object_name = 'posts'
-    template_name = 'boards/topic_posts.html'
-    paginate_by = 3
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        self.topic.views += 1
-        self.topic.save()
-        kwargs['topic'] = self.topic
-        return super().get_context_data(**kwargs)
-
-    def get_queryset(self):
-        self.topic = get_object_or_404(
-            Topic,
-            board__pk=self.kwargs.get('pk'),
-            pk=self.kwargs.get('topic_pk'))
-        queryset = self.topic.posts.order_by('created_at')
         return queryset
 
 
@@ -107,6 +58,43 @@ def new_topic(request, pk):
         'form': form
     }
     return render(request, 'boards/new_topic.html', context)
+
+
+class PostListView(ListView):
+    model = Post
+    context_object_name = 'posts'
+    template_name = 'boards/topic_posts.html'
+    paginate_by = 3
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        self.topic.views += 1
+        self.topic.save()
+        kwargs['topic'] = self.topic
+        return super().get_context_data(**kwargs)
+
+    def get_queryset(self):
+        self.topic = get_object_or_404(
+            Topic,
+            board__pk=self.kwargs.get('pk'),
+            pk=self.kwargs.get('topic_pk'))
+        queryset = self.topic.posts.order_by('created_at')
+        return queryset
+
+# Working on
+# @method_decorator(login_required, name='dispatch')
+# class PostCreateView(CreateView):
+#     model = Post
+#     fields = ('message', )
+#     template_name = 'boards/reply_topic.html'
+#     pk_url_kwarg = 'post_pk'
+#     context_object_name = 'post'
+#
+#     def form_valid(self, form):
+#         post = form.save(commit=False)
+#         post.created_by = self.request.user
+#         # post.created_at = timezone.now()
+#         post.save()
+#         return redirect('topic_posts', pk=post.topic.board_id, topic_pk=post.topic.pk)
 
 
 @login_required
